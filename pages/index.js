@@ -3,8 +3,12 @@ import { useState } from "react";
 import styles from "./index.module.css";
 
 export default function Home() {
-  const [animalInput, setAnimalInput] = useState("");
+  const [symptoms, setSymptoms] = useState(
+    "cough, sexual dysfunction, high blood pressure"
+  );
   const [result, setResult] = useState();
+  const [age, setAge] = useState(1);
+  const [gender, setGender] = useState("male");
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -13,11 +17,15 @@ export default function Home() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ animal: animalInput }),
+      body: JSON.stringify({ entries: symptoms, age, gender }),
     });
     const data = await response.json();
-    setResult(data.result);
-    setAnimalInput("");
+    try {
+      setResult(data.result);
+      // setSymptoms("");
+    } catch (err) {
+      console.log(data);
+    }
   }
 
   return (
@@ -28,19 +36,51 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <img src="/dog.png" className={styles.icon} />
-        <h3>Name my pet</h3>
+        <h3>Generate ICD-10 codes</h3>
         <form onSubmit={onSubmit}>
-          <input
-            type="text"
-            name="animal"
-            placeholder="Enter an animal"
-            value={animalInput}
-            onChange={(e) => setAnimalInput(e.target.value)}
+          <div className={styles.row}>
+            <div className={styles.col}>
+              <label>Age</label>
+              <input
+                type="number"
+                placeholder="Patient age"
+                value={age}
+                onChange={(e) => setAge(e.target.value)}
+              />
+            </div>
+            <div className={styles.col}>
+              <label>Gender</label>
+              <select
+                name="gender"
+                value={gender}
+                onChange={(e) => setGender(e.target.value)}
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+          </div>
+
+          <hr />
+          <label>Symptoms</label>
+          <textarea
+            rows={10}
+            name="symptoms"
+            placeholder="Add entries"
+            value={symptoms}
+            onChange={(e) => setSymptoms(e.target.value)}
           />
-          <input type="submit" value="Generate names" />
+          <input type="submit" value="Generate ICD-10 codes" />
         </form>
-        <div className={styles.result}>{result}</div>
+        {Array.isArray(result) && (
+          <div className={styles.result}>
+            {result.map((item) => (
+              <div key={item.id}>
+                {item.code} {item.desc}
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

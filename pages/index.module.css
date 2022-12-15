@@ -41,7 +41,10 @@
   flex-direction: column;
   width: 320px;
 }
-.main input[type="text"] {
+.main input[type="text"],
+.main input[type="number"],
+.main select,
+.main textarea {
   padding: 12px 16px;
   border: 1px solid #10a37f;
   border-radius: 4px;
@@ -63,4 +66,16 @@
 .main .result {
   font-weight: bold;
   margin-top: 40px;
+}
+
+.main .row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.main .row .col {
+  flex: 1;
+  margin-right: 8px;
 }
