@@ -9,9 +9,11 @@ export default function Home() {
   const [result, setResult] = useState();
   const [age, setAge] = useState(1);
   const [gender, setGender] = useState("male");
+  const [loading, setLoading] = useState(false);
 
   async function onSubmit(event) {
     event.preventDefault();
+    setLoading(true);
     const response = await fetch("/api/generate", {
       method: "POST",
       headers: {
@@ -23,8 +25,10 @@ export default function Home() {
     try {
       setResult(data.result);
       // setSymptoms("");
+      setLoading(false);
     } catch (err) {
       console.log(data);
+      setLoading(false);
     }
   }
 
@@ -70,7 +74,11 @@ export default function Home() {
             value={symptoms}
             onChange={(e) => setSymptoms(e.target.value)}
           />
-          <input type="submit" value="Generate ICD-10 codes" />
+          <input
+            type="submit"
+            disabled={loading}
+            value="Generate ICD-10 codes"
+          />
         </form>
         {Array.isArray(result) && (
           <div className={styles.result}>
